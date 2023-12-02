@@ -14,13 +14,17 @@ class VisitorInterp(day02Visitor):
 
     # Visit a parse tree produced by day02Parser#color_spec.
     def visitColor_spec(self, ctx:day02Parser.Color_specContext):
-        print(f'{ctx.color} = {ctx.count}')
+        #print(f'{ctx.color} = {ctx.count}')
         return [ctx.color.text, int(ctx.count.text)]
+
+    # Visit a parse tree produced by day02Parser#colors.
+    def visitColors(self, ctx:day02Parser.ColorsContext):
+        return list(self.visitChildren(ctx))
 
 
     # Visit a parse tree produced by day02Parser#start.
     def visitStart(self, ctx:day02Parser.StartContext):
         for i in range(0, ctx.getChildCount(), 1):
-            self.visit(ctx.getChild(i))
+            print(self.visit(ctx.getChild(i)))
         return self.visitChildren(ctx)
 
