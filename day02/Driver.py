@@ -26,8 +26,10 @@ def main(argv):
     if parser.getNumberOfSyntaxErrors() > 0:
         print("syntax errors")
     else:
-        vinterp = VisitorInterp()
-        positions = vinterp.visit(tree)
+        # 12 red cubes, 13 green cubes, and 14 blue
+        vinterp = VisitorInterp(limits={'red': 12, 'blue': 14, 'green': 13})
+        vinterp.visit(tree)
+        print(vinterp.total)
         1
 
 
