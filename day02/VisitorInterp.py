@@ -39,9 +39,10 @@ class VisitorInterp(day02Visitor):
             draw = self.visit(ctx.getChild(i))
             if draw:
                 if not isWithinLimits(draw, self.limits):
+                    print(f'Disqualified game {ctx.id_.text} by {draw}')
                     break
-                print(f'game {ctx.id_.text} was {draw}')
         else:
+            print(f'Game {ctx.id_.text} counted!')
             self.total += int(ctx.id_.text)
 
         # return self.visitChildren(ctx)
