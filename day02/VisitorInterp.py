@@ -50,12 +50,24 @@ class VisitorInterp(day02Visitor):
     # Visit a parse tree produced by day02Parser#game.
     def visitGame(self, ctx: day02Parser.GameContext):
         # part 2:
-        draws = [d for d in self.visitChildren(ctx) if d]
+        draws = []
+        for i in range(0, ctx.getChildCount(), 1):
+            draw = self.visit(ctx.getChild(i))
+            if draw:
+                draws.append(draw)
+
         limit = minLimitReduction(draws)
         cube_power = prod(limit.values())
         print(f'Game {ctx.id_.text} cube_power = {cube_power}')
+        return cube_power
 
-
+    def visitStart(self, ctx: day02Parser.StartContext):
+        self.total = 0
+        for i in range(0, ctx.getChildCount(), 1):
+            cube_power = self.visit(ctx.getChild(i))
+            if cube_power:
+                self.total += cube_power
+        print(f'Total cube_power {self.total}')
 
     def visitGame_part1(self, ctx: day02Parser.GameContext):
 
