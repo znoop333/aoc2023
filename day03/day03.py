@@ -53,18 +53,9 @@ def walk(schematic: np.array) -> int:
 
 
 def main():
-    input = """
-467..114..
-...*......
-..35..633.
-......#...
-617*......
-.....+.58.
-..592.....
-......755.
-...$.*....
-.664.598..    
-    """
+    with open("input.txt", "r") as f:
+        input = f.read()
+
     schematic = parse_schematic(input)
     # avoid edge effect using padding
     schematic = np.pad(schematic, (1, 1), 'constant', constant_values=('.', '.'))
