@@ -10,7 +10,7 @@ import datetime
 import time
 from math import prod
 from collections import defaultdict
-
+import functools
 
 class VisitorInterp(day04Visitor):
 
@@ -32,13 +32,28 @@ class VisitorInterp(day04Visitor):
             if win_:
                 originals[int(ctx.getChild(i).id_.text)] = self.visit(ctx.getChild(i))
 
-        copies = defaultdict(int)
-        need_to_visit = list(originals.keys())
-        while len(need_to_visit):
-            visit = need_to_visit.pop()
-            if visit in copies:
-                1
+        queue = list(originals.keys())
+        won = defaultdict(int)
+        while queue:
+            child_id = queue.pop()
+            if child_id not in originals:
+                pass
+            else:
+                for i in range(child_id+1, child_id+originals[child_id]+1):
+                    won[i] += 1
+                queue.extend(range(child_id+1, child_id+originals[child_id]+1))
 
+        self.total = sum(won.values()) + ctx.getChildCount() - 1
+
+        """
+        @functools.cache
+        def traverse(child_id: int) -> int:
+            if child_id not in originals:
+                return 1
+            return sum([traverse(ch) for ch in range(child_id+1, child_id+originals[child_id]+2)])
+
+        self.total = sum([traverse(ch) for ch in originals]) + len(originals.keys())
+        """
 
         1
 
