@@ -27,7 +27,7 @@ def main(argv):
     else:
         vinterp = VisitorInterp()
         vinterp.visit(tree)
-        print(vinterp.total)
+        print(vinterp.answer)
 
 
 if __name__ == '__main__':

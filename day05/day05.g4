@@ -1,5 +1,5 @@
 grammar day05;
-start :'seeds:' seed_list | maps+ EOF;
+start :'seeds:' seed_list maps+ EOF;
 seed_list: seeds+=INT+;
 maps:
 'seed-to-soil' 'map:' seed_to_soil_map+=map+ |
