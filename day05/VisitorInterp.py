@@ -31,7 +31,11 @@ class VisitorInterp(day05Visitor):
         }
 
     def visitSeed_list(self, ctx: day05Parser.Seed_listContext):
-        self.seeds = set([int(ct.text) for ct in ctx.seeds])
+        # self.seeds = set([int(ct.text) for ct in ctx.seeds])
+        self.seeds = []
+        if len(ctx.seeds):
+            for i in range(0, len(ctx.seeds), 2):
+                self.seeds.extend(range(int(ctx.seeds[i].text), int(ctx.seeds[i].text)+int(ctx.seeds[i+1].text)+1))
         return self.visitChildren(ctx)
 
     def visitMap(self, ctx: day05Parser.MapContext):
