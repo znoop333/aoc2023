@@ -39,6 +39,9 @@ class iRange:
 def IntersectionWithTransformation(a: iRange, b: iRange, tx_shift: int) -> List[iRange]:
     # always returns 3 iRanges, but some of them can be None
 
+    if a.start == 53:
+        1
+
     # case 0: empty ranges
     if a.isEmpty() or b.isEmpty():
         return [None, None, None]
@@ -135,6 +138,7 @@ class VisitorInterp(day05Visitor):
             'humidity': 6,
             'location': 7,
         }
+        self.ind2map = {v: k for k, v in self.map2ind.items()}
         IntersectionWithTransformationTests()
 
     def visitSeed_list(self, ctx: day05Parser.Seed_listContext):
@@ -172,15 +176,22 @@ class VisitorInterp(day05Visitor):
             for entry in self.maps[map_no]:
                 new_ranges = []
                 for rng in active_ranges:
-                    new_ranges.extend(
-                        [r for r in IntersectionWithTransformation(rng, entry['source'], entry['shift']) if r])
+                    R = [r for r in IntersectionWithTransformation(rng, entry['source'], entry['shift']) if r]
+                    if a.start == 14:
+                        1
+                    if len(R):
+                        new_ranges.extend(R)
+                        active_ranges = new_ranges
+                        #print(f'Map {map_no}, {self.ind2map[map_no+1]}: {a.start} went to {active_ranges[0].start}')
+                        break
 
-                active_ranges = new_ranges
 
         min_el = None
         for r in active_ranges:
             if min_el is None or min_el > r.start:
                 min_el = r.start
+
+        print(f'Final answer: {a.start} went to {min_el}')
 
         return min_el
 
