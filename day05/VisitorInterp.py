@@ -37,14 +37,14 @@ class iRange:
 
 
 def IntersectionWithTransformation(a: iRange, b: iRange, tx_shift: int) -> List[iRange]:
-    # always returns 3 iRanges, but some of them can be None
+    # always returns a bool and 3 iRanges, but some of them can be None
 
     if a.start == 53:
         1
 
     # case 0: empty ranges
     if a.isEmpty() or b.isEmpty():
-        return [None, None, None]
+        return True, None, None, None
 
     # case 1: identical ranges
     if a == b:
@@ -173,16 +173,16 @@ class VisitorInterp(day05Visitor):
             if not len(active_ranges) > 0:
                 return []
 
-            for entry in self.maps[map_no]:
+            for rng in active_ranges:
                 new_ranges = []
-                for rng in active_ranges:
+                for entry in self.maps[map_no]:
                     R = [r for r in IntersectionWithTransformation(rng, entry['source'], entry['shift']) if r]
                     if a.start == 14:
                         1
                     if len(R):
                         new_ranges.extend(R)
                         active_ranges = new_ranges
-                        #print(f'Map {map_no}, {self.ind2map[map_no+1]}: {a.start} went to {active_ranges[0].start}')
+                        print(f'Map {map_no}, {self.ind2map[map_no+1]}: {rng.start} went to {active_ranges[0].start}')
                         break
 
 
