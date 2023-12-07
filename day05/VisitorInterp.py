@@ -35,7 +35,8 @@ class VisitorInterp(day05Visitor):
         self.seeds = []
         if len(ctx.seeds):
             for i in range(0, len(ctx.seeds), 2):
-                self.seeds.extend(range(int(ctx.seeds[i].text), int(ctx.seeds[i].text)+int(ctx.seeds[i+1].text)+1))
+                self.seeds.append(
+                    range(int(ctx.seeds[i].text), int(ctx.seeds[i].text) + int(ctx.seeds[i + 1].text) + 1))
         return self.visitChildren(ctx)
 
     def visitMap(self, ctx: day05Parser.MapContext):
@@ -62,16 +63,21 @@ class VisitorInterp(day05Visitor):
                 return entry['d0'] + item - entry['s0']
         return item
 
-    def visitStart(self, ctx:day05Parser.StartContext):
-        self.visitChildren(ctx)
-        for seed in self.seeds:
-            i = seed
-            for j in range(self.maxmaps):
-                i = self.lookup(j, i)
+    @functools.cache
+    def search_maps(self, i: int) -> int:
+        for j in range(self.maxmaps):
+            i = self.lookup(j, i)
+        return i
 
-            if self.answer is None:
-                self.answer = i
-            else:
-                self.answer = min(self.answer, i)
+    def visitStart(self, ctx: day05Parser.StartContext):
+        self.visitChildren(ctx)
+        for rng in self.seeds:
+            for seed in rng:
+                i = self.search_maps(seed)
+
+                if self.answer is None:
+                    self.answer = i
+                else:
+                    self.answer = min(self.answer, i)
 
         return self.answer
