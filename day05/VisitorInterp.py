@@ -138,63 +138,57 @@ class VisitorInterp(day05Visitor):
         IntersectionWithTransformationTests()
 
     def visitSeed_list(self, ctx: day05Parser.Seed_listContext):
-        # self.seeds = set([int(ct.text) for ct in ctx.seeds])
         self.seeds = []
         if len(ctx.seeds):
-            for i in range(0, len(ctx.seeds), 2):
-                self.seeds.append(
-                    iRange(int(ctx.seeds[i].text), int(ctx.seeds[i].text) + int(ctx.seeds[i + 1].text)))
+            # part 1
+            for i in range(len(ctx.seeds)):
+                self.seeds.append(iRange(int(ctx.seeds[i].text), int(ctx.seeds[i].text)))
+
+            # part 2
+            # for i in range(0, len(ctx.seeds), 2):
+            #     self.seeds.append(
+            #         iRange(int(ctx.seeds[i].text), int(ctx.seeds[i].text) + int(ctx.seeds[i + 1].text-1)))
         return self.visitChildren(ctx)
 
     def visitMap(self, ctx: day05Parser.MapContext):
         self.visitChildren(ctx)
-        map_ = {
-            'destination': int(ctx.destination.text),
-            'source': int(ctx.source.text),
-            'length': int(ctx.length.text)
+        return {
+            'destination': iRange(int(ctx.destination.text), int(ctx.destination.text) + int(ctx.length.text) - 1),
+            'source': iRange(int(ctx.source.text), int(ctx.source.text) + int(ctx.length.text) - 1),
+            'shift': int(ctx.destination.text) - int(ctx.source.text),
         }
-        map_['s0'] = map_['source']
-        map_['s1'] = map_['source'] + map_['length']
-        map_['d0'] = map_['destination']
-        map_['d1'] = map_['destination'] + map_['length']
-        return map_
 
     def visitMaps(self, ctx: day05Parser.MapsContext):
         entries = [self.visitMap(entry) for entry in ctx.entries]
         self.maps[self.map2ind[ctx.source.text]] = entries
         return self.visitChildren(ctx)
 
-    def lookup(self, map_no: int, item: int) -> int:
-        for entry in self.maps[map_no]:
-            if entry['s0'] <= item <= entry['s1']:
-                return entry['d0'] + item - entry['s0']
-        return item
-
-    @functools.cache
-    def search_maps(self, i: int) -> int:
-        for j in range(self.maxmaps):
-            i = self.lookup(j, i)
-        return i
-
-    def search_ranges(self, a: iRange) -> iRange:
+    def search_ranges(self, a: iRange) -> int:
         active_ranges = [a]
-        for j in range(self.maxmaps):
+        for map_no in range(self.maxmaps):
             if not len(active_ranges) > 0:
                 return []
 
-            i = self.lookup(j, i)
-        return i
+            for entry in self.maps[map_no]:
+                new_ranges = []
+                for rng in active_ranges:
+                    new_ranges.extend(
+                        [r for r in IntersectionWithTransformation(rng, entry['source'], entry['shift']) if r])
+
+                active_ranges = new_ranges
+
+        min_el = None
+        for r in active_ranges:
+            if min_el is None or min_el > r.start:
+                min_el = r.start
+
+        return min_el
 
     def visitStart(self, ctx: day05Parser.StartContext):
         self.visitChildren(ctx)
         for rng in self.seeds:
             soln = self.search_ranges(rng)
-            # for seed in rng:
-            #     i = self.search_maps(seed)
-
-            if self.answer is None:
-                self.answer = i
-            else:
-                self.answer = min(self.answer, i)
+            if self.answer is None or self.answer > soln:
+                self.answer = soln
 
         return self.answer
