@@ -26,42 +26,51 @@ def score_row(row):
     # first_card_rank = card_rank.index(hand[0]) + 1
 
     five_of_a_kind = [k for k, v in card_counts.items() if v == 5]
-    if five_of_a_kind:
-        hand_kind_score = 10
-
     four_of_a_kind = [k for k, v in card_counts.items() if v == 4]
-    if four_of_a_kind:
-        hand_kind_score = 9
-
     three_of_a_kind = [k for k, v in card_counts.items() if v == 3]
     two_of_a_kind = [k for k, v in card_counts.items() if v == 2]
-    if three_of_a_kind:
+
+    if five_of_a_kind:
+        hand_kind_score = 10
+        hand_kind_card_score = card_rank_score(five_of_a_kind[0])
+    elif four_of_a_kind:
+        hand_kind_score = 9
+        hand_kind_card_score = card_rank_score(four_of_a_kind[0])
+    elif three_of_a_kind:
         if two_of_a_kind:
             # full house
             hand_kind_score = 8
+            hand_kind_card_score = 100*card_rank_score(three_of_a_kind[0]) + card_rank_score(two_of_a_kind[0])
         else:
             # just 3 of a kind
             hand_kind_score = 7
+            hand_kind_card_score = card_rank_score(three_of_a_kind[0])
     elif len(two_of_a_kind) == 2:
         # two pair
-        score += 100000 + first_card_rank
-    elif num_pairs == 1:
+        hand_kind_score = 6
+        hand_kind_card_score1 = card_rank_score(two_of_a_kind[0])
+        hand_kind_card_score2 = card_rank_score(two_of_a_kind[0])
+        if hand_kind_card_score1 < hand_kind_card_score2:
+            hand_kind_card_score1, hand_kind_card_score2 = hand_kind_card_score2, hand_kind_card_score1
+
+        hand_kind_card_score = 100 * hand_kind_card_score1 + hand_kind_card_score2
+    elif two_of_a_kind:
         # one pair
-        score += 50000 + first_card_rank
+        hand_kind_score = 5
+        hand_kind_card_score = card_rank_score(two_of_a_kind[0])
     else:
         # high card
-        highest_rank = max([card_rank.index(card_) for card_ in hand]) + 1
-        score += 10000 + 100 * highest_rank + first_card_rank
+        hand_kind_score = 4
+        hand_kind_card_score = max([card_rank_score(card_) for card_ in hand])
 
-    hand_kind_weight = 10**12
-    tiebreaker_weight = 1
-    score = hand_kind_weight * hand_kind_score + tiebreaker_weight
+    score = 10**28 * hand_kind_score + 10**20 * hand_kind_card_score + tiebreaker_score
 
     return score
 
 
 def main():
-    df = pd.read_csv("test_input.txt", sep=' ', header=None, names=('hand', 'bid'))
+    # df = pd.read_csv("test_input.txt", sep=' ', header=None, names=('hand', 'bid'))
+    df = pd.read_csv("input.txt", sep=' ', header=None, names=('hand', 'bid'))
 
     # add some testcases for high card
     # df.loc[len(df)] = '32T89', 10
