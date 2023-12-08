@@ -11,7 +11,7 @@ def score_row(row):
     score = 0
 
     # reverse the card ranks so that increasing indexes correspond to higher ranks of cards
-    card_rank = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'][::-1]
+    card_rank = ['A', 'K', 'Q', 'T', '9', '8', '7', '6', '5', '4', '3', '2', 'J'][::-1]
     # for scoring, we'll add one to the index into this array
     card_rank_score = lambda x: card_rank.index(x) + 1
 
@@ -25,18 +25,19 @@ def score_row(row):
     card_counts = Counter(hand)
     # first_card_rank = card_rank.index(hand[0]) + 1
 
-    five_of_a_kind = [k for k, v in card_counts.items() if v == 5]
-    four_of_a_kind = [k for k, v in card_counts.items() if v == 4]
-    three_of_a_kind = [k for k, v in card_counts.items() if v == 3]
-    two_of_a_kind = [k for k, v in card_counts.items() if v == 2]
+    js = card_counts.get('J', 0)
+    five_of_a_kind = [k for k, v in card_counts.items() if v == 5 and k != 'J']
+    four_of_a_kind = [k for k, v in card_counts.items() if v == 4 and k != 'J']
+    three_of_a_kind = [k for k, v in card_counts.items() if v == 3 and k != 'J']
+    two_of_a_kind = [k for k, v in card_counts.items() if v == 2 and k != 'J']
 
-    if five_of_a_kind:
+    if five_of_a_kind or js > 0 and four_of_a_kind:
         hand_kind_score = 10
         hand_kind_card_score = card_rank_score(five_of_a_kind[0])
-    elif four_of_a_kind:
+    elif four_of_a_kind or js > 0 and three_of_a_kind:
         hand_kind_score = 9
         hand_kind_card_score = card_rank_score(four_of_a_kind[0])
-    elif three_of_a_kind:
+    elif three_of_a_kind or js > 0 and two_of_a_kind:
         if two_of_a_kind:
             # full house
             hand_kind_score = 8
