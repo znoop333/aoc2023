@@ -63,7 +63,8 @@ def score_row(row):
         hand_kind_score = 4
         hand_kind_card_score = max([card_rank_score(card_) for card_ in hand])
 
-    score = 10**28 * hand_kind_score + 10**20 * hand_kind_card_score + tiebreaker_score
+    # score = 10**28 * hand_kind_score + 10**20 * hand_kind_card_score + tiebreaker_score
+    score = 10**28 * hand_kind_score + tiebreaker_score
 
     return score
 
