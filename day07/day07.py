@@ -20,7 +20,7 @@ def score_row(row):
     # since there are 13 card ranks, that can be represented as two digits in base10.
     # the tiebreaker is the result of adding up the card rank score for each card in reverse order, since
     # the first card counts for more than any of the others, but it has index=0
-    tiebreaker_score = sum([10**(2*ix_) * card_rank_score(card_) for ix_, card_ in enumerate(hand[::-1])])
+    tiebreaker_score = sum([10 ** (2 * ix_) * card_rank_score(card_) for ix_, card_ in enumerate(hand[::-1])])
 
     card_counts = Counter(hand)
     # first_card_rank = card_rank.index(hand[0]) + 1
@@ -31,41 +31,43 @@ def score_row(row):
     three_of_a_kind = [k for k, v in card_counts.items() if v == 3 and k != 'J']
     two_of_a_kind = [k for k, v in card_counts.items() if v == 2 and k != 'J']
 
-    if five_of_a_kind or js > 0 and four_of_a_kind:
+    # JJJJJ or JJJJX can both make a five of a kind, where X is any non-J
+    # other 5s: JJJXX JJXXX JXXXX
+    if five_of_a_kind \
+            or js >= 4 \
+            or js == 3 and two_of_a_kind \
+            or js == 2 and three_of_a_kind \
+            or js == 1 and four_of_a_kind:
         hand_kind_score = 10
-        hand_kind_card_score = card_rank_score(five_of_a_kind[0])
-    elif four_of_a_kind or js > 0 and three_of_a_kind:
+    elif four_of_a_kind \
+            or js == 3 \
+            or js == 2 and two_of_a_kind \
+            or js == 1 and three_of_a_kind:
+        # XXXXY, XXXJY, XXJJY, XJJJY
         hand_kind_score = 9
-        hand_kind_card_score = card_rank_score(four_of_a_kind[0])
-    elif three_of_a_kind or js > 0 and two_of_a_kind:
-        if two_of_a_kind:
-            # full house
-            hand_kind_score = 8
-            hand_kind_card_score = 100*card_rank_score(three_of_a_kind[0]) + card_rank_score(two_of_a_kind[0])
-        else:
-            # just 3 of a kind
-            hand_kind_score = 7
-            hand_kind_card_score = card_rank_score(three_of_a_kind[0])
-    elif len(two_of_a_kind) == 2:
-        # two pair
+    elif three_of_a_kind and two_of_a_kind \
+            or len(two_of_a_kind) == 2 and js == 1 \
+            or two_of_a_kind and js == 2:
+        # full houses are tricky because the Js can make either a 3 of a kind or a 2 of a kind
+        # XXXYY, XXYYJ, XXYJJ
+        hand_kind_score = 8
+    elif three_of_a_kind \
+            or js == 2 \
+            or js == 1 and two_of_a_kind:
+        # just 3 of a kind: XXXYZ, XXJYZ, XJJYZ
+        hand_kind_score = 7
+    elif len(two_of_a_kind) == 2 and js == 0:
+        # two pair: XXYYZ. Adding any Js will turn this into 3 of a kind or full house!
         hand_kind_score = 6
-        hand_kind_card_score1 = card_rank_score(two_of_a_kind[0])
-        hand_kind_card_score2 = card_rank_score(two_of_a_kind[0])
-        if hand_kind_card_score1 < hand_kind_card_score2:
-            hand_kind_card_score1, hand_kind_card_score2 = hand_kind_card_score2, hand_kind_card_score1
-
-        hand_kind_card_score = 100 * hand_kind_card_score1 + hand_kind_card_score2
-    elif two_of_a_kind:
-        # one pair
+    elif two_of_a_kind and js == 0 \
+            or js == 1:
+        # one pair: WXXYZ, VWXYJ
         hand_kind_score = 5
-        hand_kind_card_score = card_rank_score(two_of_a_kind[0])
     else:
         # high card
         hand_kind_score = 4
-        hand_kind_card_score = max([card_rank_score(card_) for card_ in hand])
 
-    # score = 10**28 * hand_kind_score + 10**20 * hand_kind_card_score + tiebreaker_score
-    score = 10**28 * hand_kind_score + tiebreaker_score
+    score = 10 ** 28 * hand_kind_score + tiebreaker_score
 
     return score
 
