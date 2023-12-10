@@ -51,7 +51,7 @@ class VisitorInterp(day08Visitor):
         self.visitChildren(ctx)
         self.instructions = [item for item in ctx.lr.text]
         # self.answer = self.walk(self.root, 0, -1)
-        self.answer = self.walk_iter(self.root)
+        self.answer = self.walk_iter('AAA')
 
         return self.answer
 
