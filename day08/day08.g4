@@ -4,6 +4,5 @@ node: base=ID '=' '(' left=ID ',' right=ID ')' '\n'?;
 
 
 LR : ('L' | 'R')+;
-ID: [A-Z][A-Z][A-Z];
-INT : [0-9]+ ;
+ID: [0-9A-Z][0-9A-Z][0-9A-Z];
 WS : [ \r\t]+ -> skip ;

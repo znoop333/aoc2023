@@ -18,8 +18,8 @@ def main(argv):
     #     input_stream = FileStream(inname, encoding='utf-8')
     # else:
     #     input_stream = FileStream('input.txt', encoding='utf-8')
-    input_stream = FileStream('test_input3.txt', encoding='utf-8')
-    # input_stream = FileStream('input.txt', encoding='utf-8')
+    # input_stream = FileStream('test_input3.txt', encoding='utf-8')
+    input_stream = FileStream('input.txt', encoding='utf-8')
 
     lexer = day08Lexer(input_stream)
     stream = CommonTokenStream(lexer)
