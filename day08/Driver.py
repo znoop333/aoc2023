@@ -13,11 +13,14 @@ import numpy as np
 
 
 def main(argv):
-    if len(argv) > 1:
-        inname = pathlib.Path(argv[1])
-        input_stream = FileStream(inname, encoding='utf-8')
-    else:
-        input_stream = FileStream('input.txt', encoding='utf-8')
+    # if len(argv) > 1:
+    #     inname = pathlib.Path(argv[1])
+    #     input_stream = FileStream(inname, encoding='utf-8')
+    # else:
+    #     input_stream = FileStream('input.txt', encoding='utf-8')
+    #input_stream = FileStream('test_input2.txt', encoding='utf-8')
+    input_stream = FileStream('input.txt', encoding='utf-8')
+
     lexer = day08Lexer(input_stream)
     stream = CommonTokenStream(lexer)
     parser = day08Parser(stream)

@@ -31,10 +31,27 @@ class VisitorInterp(day08Visitor):
             return self.walk(self.graph[current_node][0], depth + 1, instruction_index)
         return self.walk(self.graph[current_node][1], depth + 1, instruction_index)
 
+    def walk_iter(self, start_):
+        current_node = start_
+        steps = 0
+        instruction_index = 0
+
+        while current_node != 'ZZZ':
+            # if steps % 100 == 0:
+            #     print(f'at node {current_node}, instruction {self.instructions[instruction_index]} with steps {steps}')
+            if self.instructions[instruction_index] == 'L':
+                current_node = self.graph[current_node][0]
+            else:
+                current_node = self.graph[current_node][1]
+            steps += 1
+            instruction_index = (instruction_index + 1) % len(self.instructions)
+        return steps
+
     def visitStart(self, ctx: day08Parser.StartContext):
         self.visitChildren(ctx)
         self.instructions = [item for item in ctx.lr.text]
-        self.answer = self.walk(self.root, 0, -1)
+        # self.answer = self.walk(self.root, 0, -1)
+        self.answer = self.walk_iter(self.root)
 
         return self.answer
 
