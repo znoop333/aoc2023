@@ -15,27 +15,28 @@ def parse_input(input: str):
 def diff_count(a: np.array) -> int:
     # how many times must the array "a" be diff'ed until it's all zeros?
     d = 0
+    sum_last = a[-1]
     while np.any(a):
         d += 1
         a = np.diff(a)
+        sum_last += a[-1]
 
-    return d
+    return d, sum_last
 
 
 def main():
-    # with open("input.txt", "r") as f:
-    with open("test_input.txt", "r") as f:
+    with open("input.txt", "r") as f:
+    # with open("test_input.txt", "r") as f:
         input = f.read()
 
-    extrapolated_sum = 0
     oasis = parse_input(input)
+    answer = 0
     for o in oasis:
-        d = diff_count(o)
-        extrapolated = 0
-        extrapolated_sum += extrapolated
-        print(f'diff_count({o}) = {d}')
+        d, sum_last = diff_count(o)
+        print(f'diff_count({o}) = {d}, sum_last {sum_last}')
+        answer += sum_last
 
-    1
+    print(f'The answer is {answer}')
 
 
 if __name__ == '__main__':
