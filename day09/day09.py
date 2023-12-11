@@ -16,12 +16,17 @@ def diff_count(a: np.array) -> int:
     # how many times must the array "a" be diff'ed until it's all zeros?
     d = 0
     sum_last = a[-1]
+    diff_first = a[0]
     while np.any(a):
         d += 1
         a = np.diff(a)
         sum_last += a[-1]
+        if d % 2 == 1:
+            diff_first -= a[0]
+        else:
+            diff_first += a[0]
 
-    return d, sum_last
+    return d, sum_last, diff_first
 
 
 def main():
@@ -31,12 +36,14 @@ def main():
 
     oasis = parse_input(input)
     answer = 0
+    answer_part2 = 0
     for o in oasis:
-        d, sum_last = diff_count(o)
+        d, sum_last, diff_first = diff_count(o)
         print(f'diff_count({o}) = {d}, sum_last {sum_last}')
         answer += sum_last
+        answer_part2 += diff_first
 
-    print(f'The answer is {answer}')
+    print(f'The answer is {answer}.\nPart 2 answer {answer_part2}')
 
 
 if __name__ == '__main__':
