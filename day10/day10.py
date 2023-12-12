@@ -71,26 +71,66 @@ def floodfill(graph: np.array) -> int:
             if prev_unvisited:
                 q.append((nr, nc, node_d + 1))
 
-    return np.max(dist)
+    return np.max(dist), dist
+
+
+def clean_graph(graph: np.array, dist: np.array) -> np.array:
+    # get rid of all junk tiles. if any pipe tile was not reachable from 'S', it's junk.
+    unvisited_dist = -1
+    unvisited_r, unvisited_c = np.nonzero(dist == unvisited_dist)
+    print_graph(graph)
+    # print_graph(dist)
+    for ii in range(len(unvisited_r)):
+        graph[unvisited_r[ii], unvisited_c[ii]] = '.'
+
+    print('After cleaning: ')
+    print_graph(graph)
+
+    return graph
+
+
+def print_graph(graph: np.array):
+    height, width = graph.shape
+    s = ''
+    for ii in range(height):
+        s += ''.join(graph[ii, :]) + '\n'
+    print(s)
+
 
 def pad_graph(graph: np.array) -> np.array:
     # to make this easier to reason about, I'll pad in-between tiles so that all "exterior" regions are connected.
-    # I'll also pad 1 tile around all edges, which will connect any islands created by the pipe cutting all
-    # the way across the graph.
 
     # padding in-between tiles:
     # left-right: '-x' tiles become '--x' (extend the pipe left-right) for any other 'x' character (not '-')
-    # '
+    # 'Fx' becomes 'F-x', 'Lx' -> 'L-x', 'x7' -> 'x-7', 'xJ' -> 'x-J'
+    # any other left-right characters 'xy' pad to 'x*y'. '*' will be used in the flood fill, but doesn't count as '.'
 
-    1
+    height, width = graph.shape
+    lr_padded = np.empty((height, width))
+    for w in range(width):
+        1
+
+    # vertical padding is similar: additional '|' characters are used to extend the pipes, and other areas
+    # are filled in with '*'.
+
+    # I'll also pad 1 tile around all edges, which will connect any islands created by the pipe cutting all
+    # the way across the graph.
+    graph = np.pad(graph, (1, 1), mode='constant', constant_values=('*', '*'))
+
+    return graph
+
 
 def main():
     # with open("input.txt", "r") as f:
-    with open("test_input.txt", "r") as f:
+    # with open("test_input.txt", "r") as f:
+    with open("test_input3.txt", "r") as f:
         input = f.read()
 
     graph = parse_input(input)
-    answer = floodfill(graph)
+    answer, dist = floodfill(graph)
+    graph = clean_graph(graph, dist)
+    graph = pad_graph(graph)
+    print_graph(graph)
 
     print(f'The answer is {answer}.')
 
