@@ -106,16 +106,29 @@ def pad_graph(graph: np.array) -> np.array:
     # any other left-right characters 'xy' pad to 'x*y'. '*' will be used in the flood fill, but doesn't count as '.'
 
     height, width = graph.shape
-    lr_padded = np.empty((height, width))
-    for w in range(width):
-        1
+    lr_padded = np.empty((height, 2 * width), dtype='<U1')
+    for c in range(0, width, 2):
+        lr_padded[:, 2 * c] = graph[:, c]
+        for r in range(height):
+            if graph[r, c] in ('F', 'L', '-') or graph[r, c + 1] in ('7', 'J'):
+                lr_padded[r, 2 * c + 1] = '-'
+            else:
+                lr_padded[r, 2 * c + 1] = ' '
 
     # vertical padding is similar: additional '|' characters are used to extend the pipes, and other areas
     # are filled in with '*'.
+    padded = np.empty((2 * height, 2 * width), dtype='<U1')
+    for r in range(0, height, 2):
+        lr_padded[2 * r, :] = graph[r, :]
+        for c in range(width):
+            if graph[r, c] in ('F', '7', '|') or graph[r, c + 1] in ('L', 'J'):
+                lr_padded[2 * r + 1, c] = '|'
+            else:
+                lr_padded[2 * r + 1, c] = ' '
 
     # I'll also pad 1 tile around all edges, which will connect any islands created by the pipe cutting all
     # the way across the graph.
-    graph = np.pad(graph, (1, 1), mode='constant', constant_values=('*', '*'))
+    graph = np.pad(padded, (1, 1), mode='constant', constant_values=(' ', ' '))
 
     return graph
 
