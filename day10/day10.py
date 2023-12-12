@@ -40,7 +40,8 @@ def neighbors4(row: int, col: int, graph: np.array):
     }
 
     for dr, dc in offsets[node]:
-        ii, jj = row + dr, col + dc
+        ii = row + dr
+        jj = col + dc
         if 0 <= ii < height and 0 <= jj < width and graph[ii, jj] in valid_targets[(dr, dc)]:
             yield graph[ii, jj], ii, jj
 
@@ -49,7 +50,7 @@ def floodfill(graph: np.array) -> int:
     height, width = graph.shape
     # we'll keep track of both which nodes have been visited and their distances using a new matrix, rather than
     # modifying the existing one in-place. This sacrifices memory in favor of speed.
-    unvisited_dist = 10 ** 10
+    unvisited_dist = -1
     dist = unvisited_dist * np.ones((height, width), dtype=int)
     seed_r, seed_c = np.argwhere(graph == 'S')[0]
     dist[seed_r, seed_c] = 0
@@ -60,7 +61,10 @@ def floodfill(graph: np.array) -> int:
 
     while len(q):
         node_r, node_c, node_d = q.popleft()
-        dist[nr, nc] = min(dist[nr, nc], node_d)
+        if dist[node_r, node_c] == unvisited_dist:
+            dist[node_r, node_c] = node_d
+        else:
+            dist[node_r, node_c] = min(dist[node_r, node_c], node_d)
 
         for ng, nr, nc in neighbors4(node_r, node_c, graph):
             prev_unvisited = dist[nr, nc] == unvisited_dist
@@ -71,8 +75,8 @@ def floodfill(graph: np.array) -> int:
 
 
 def main():
-    # with open("input.txt", "r") as f:
-    with open("test_input.txt", "r") as f:
+    with open("input.txt", "r") as f:
+        # with open("test_input.txt", "r") as f:
         input = f.read()
 
     graph = parse_input(input)
