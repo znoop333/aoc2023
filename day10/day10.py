@@ -73,10 +73,20 @@ def floodfill(graph: np.array) -> int:
 
     return np.max(dist)
 
+def pad_graph(graph: np.array) -> np.array:
+    # to make this easier to reason about, I'll pad in-between tiles so that all "exterior" regions are connected.
+    # I'll also pad 1 tile around all edges, which will connect any islands created by the pipe cutting all
+    # the way across the graph.
+
+    # padding in-between tiles:
+    # left-right: '-x' tiles become '--x' (extend the pipe left-right) for any other 'x' character (not '-')
+    # '
+
+    1
 
 def main():
-    with open("input.txt", "r") as f:
-        # with open("test_input.txt", "r") as f:
+    # with open("input.txt", "r") as f:
+    with open("test_input.txt", "r") as f:
         input = f.read()
 
     graph = parse_input(input)
