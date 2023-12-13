@@ -28,22 +28,19 @@ def expand_galaxies(galaxies, universe):
         if np.all(universe[:, c] == '.'):
             expand_c.append(c)
 
-    offsets = np.zeros(galaxies.shape)
-    if expand_r:
-        for ix in range(galaxies.shape[0]):
-            for r in expand_r:
-                if galaxies[ix, 0] >= r:
-                    offsets[ix, 0] += 1
-
-    if expand_c:
-        for ix in range(galaxies.shape[0]):
-            for c in expand_c:
-                if galaxies[ix, 1] >= c:
-                    offsets[ix, 1] += 1
+    num_galaxies, _ = galaxies.shape
+    offsets = np.zeros(galaxies.shape, dtype=int)
+    for ix in range(num_galaxies):
+        for r in expand_r:
+            if galaxies[ix, 0] > r:
+                offsets[ix, 0] += 1
+        for c in expand_c:
+            if galaxies[ix, 1] > c:
+                offsets[ix, 1] += 1
 
     galaxies += offsets
 
-    return 1
+    return galaxies
 
 
 def main():
@@ -54,6 +51,7 @@ def main():
 
     universe = parse_input(input)
     galaxies = find_galaxies(universe)
+    galaxies = expand_galaxies(galaxies, universe)
 
     answer = 0
     # answer = count_dots(universe)
