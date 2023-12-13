@@ -43,9 +43,22 @@ def expand_galaxies(galaxies, universe):
     return galaxies
 
 
+def pairwise_dist(galaxies):
+    # using the taxicab distance metric, find the distance between all pairs of galaxies
+    total = 0
+    num_galaxies, _ = galaxies.shape
+    for i in range(num_galaxies):
+        for j in range(i + 1, num_galaxies):
+            d = abs(galaxies[j, 0] - galaxies[i, 0]) + abs(galaxies[j, 1] - galaxies[i, 1])
+            total += d
+            # print(f'Between galaxy {i} and galaxy {j}: {d}')
+
+    return total
+
+
 def main():
-    # with open("input.txt", "r") as f:
-    with open("test_input.txt", "r") as f:
+    with open("input.txt", "r") as f:
+    # with open("test_input.txt", "r") as f:
         input = f.read()
     # input = """ """
 
@@ -53,9 +66,7 @@ def main():
     galaxies = find_galaxies(universe)
     galaxies = expand_galaxies(galaxies, universe)
 
-    answer = 0
-    # answer = count_dots(universe)
-    # print_universe(universe)
+    answer = pairwise_dist(galaxies)
 
     print(f'The answer is {answer}.')
 
