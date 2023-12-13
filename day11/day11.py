@@ -16,7 +16,7 @@ def find_galaxies(universe):
     return np.argwhere(universe == '#')
 
 
-def expand_galaxies(galaxies, universe):
+def expand_galaxies(galaxies, universe, expansion=1000000):
     height, width = universe.shape
     expand_r = []
     for r in range(height):
@@ -33,10 +33,10 @@ def expand_galaxies(galaxies, universe):
     for ix in range(num_galaxies):
         for r in expand_r:
             if galaxies[ix, 0] > r:
-                offsets[ix, 0] += 1
+                offsets[ix, 0] += expansion-1
         for c in expand_c:
             if galaxies[ix, 1] > c:
-                offsets[ix, 1] += 1
+                offsets[ix, 1] += expansion-1
 
     galaxies += offsets
 
@@ -64,7 +64,8 @@ def main():
 
     universe = parse_input(input)
     galaxies = find_galaxies(universe)
-    galaxies = expand_galaxies(galaxies, universe)
+    # for part1, use expansion=2
+    galaxies = expand_galaxies(galaxies, universe, expansion=1000000)
 
     answer = pairwise_dist(galaxies)
 
