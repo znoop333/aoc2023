@@ -142,8 +142,8 @@ def solve(pattern, condition) -> int:
 
 
 def main():
-    with open("d12_test_input.txt", "r") as f:
-        # with open("d12_input.txt", "r") as f:
+    with open("d12_input.txt", "r") as f:
+    # with open("d12_test_input.txt", "r") as f:
         input = f.read()
 
     patterns, conditions = parse_input(input)
