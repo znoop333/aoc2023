@@ -121,7 +121,7 @@ def solve(pattern, condition) -> int:
         if i == num_h:
             ps[num_h] = N - np.sum(ps[:num_h]) - sum_h
             if consistency_check(ps, h, pattern, up_to_pi=-1, strict_length_check=True)[0]:
-                print(f'A solution to {pattern} with {condition} is {ps} and {h}, which is {format_answer(ps, h)}')
+                # print(f'A solution to {pattern} with {condition} is {ps} and {h}, which is {format_answer(ps, h)}')
                 c += 1
             return
 
@@ -133,7 +133,7 @@ def solve(pattern, condition) -> int:
         for pi in range(min_pi, max_pi + 1):
             ps[i] = pi
             if not consistency_check(ps, h, pattern, up_to_pi=i, strict_length_check=False)[0]:
-                continue
+                break
             rec(i + 1, ps.copy())
 
     rec(0, p)
