@@ -8,13 +8,29 @@ def parse_input(input: str):
     patterns = [''] * nrows
     conditions = [''] * nrows
     for row, line in enumerate(input.split('\n')):
-        patterns[row], conditions[row] = line.split(' ')
+        if len(line):
+            patterns[row], conditions[row] = line.split(' ')
 
     return patterns, conditions
 
 
 def number2pattern(i: int):
     return bin(i)[2:]
+
+
+def format_answer(ps, hs):
+    s = ''
+    for i in range(len(hs)):
+        for pi in range(ps[i]):
+            s += '.'
+
+        for hi in range(hs[i]):
+            s += '#'
+
+    for pi in range(ps[-1]):
+        s += '.'
+
+    return s
 
 
 def consistency_check(ps, hs, pattern: str, up_to_pi: int = -1, strict_length_check=True):
@@ -78,14 +94,36 @@ def solve(pattern, condition) -> int:
     p[0] = 0
     p[-1] = 0
 
-    def rec(i: int):
-        1
+    def rec(i: int, ps):
+        nonlocal c
+        # base case: once we've gotten to the last variable (p[N-1]) we can stop:
+        # either it's a complete and valid solution, or there's nothing else we can try.
+        if i == num_h:
+            ps[num_h] = N - np.sum(ps[:num_h]) - sum_h
+            if consistency_check(ps, h, pattern, up_to_pi=-1, strict_length_check=True):
+                print(f'A solution to {pattern} with {condition} is {ps} and {h}, which is {format_answer(ps, h)}')
+                c += 1
+            return
+
+        max_pi = N - sum(ps[:i]) - sum_h
+        min_pi = 1 if i not in [0, N - 1] else 0
+
+        print(f'In {pattern} with {condition} , {ps} and {h}, which is {format_answer(ps, h)}')
+
+        for pi in range(min_pi, max_pi + 1):
+            ps[i] = pi
+            if not consistency_check(ps, h, pattern, up_to_pi=i)[0]:
+                continue
+            rec(i + 1, ps.copy())
+
+    rec(0, p)
 
     return c
 
 
 def main():
-    with open("d12_input.txt", "r") as f:
+    with open("d12_test_input.txt", "r") as f:
+        # with open("d12_input.txt", "r") as f:
         input = f.read()
 
     patterns, conditions = parse_input(input)
