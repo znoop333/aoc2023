@@ -4,12 +4,13 @@ from math import prod, sqrt, floor, ceil
 
 
 def parse_input(input: str):
-    nrows = len(input.split('\n'))
-    patterns = [''] * nrows
-    conditions = [''] * nrows
+    patterns = []
+    conditions = []
     for row, line in enumerate(input.split('\n')):
         if len(line):
-            patterns[row], conditions[row] = line.split(' ')
+            p, c = line.split(' ')
+            patterns.append(p)
+            conditions.append(c)
 
     return patterns, conditions
 
@@ -80,6 +81,25 @@ def consistency_check_tests():
     # should be false, this is not a valid solution at p[i=1]
     print(consistency_check([0, 17, 1, 0], [1, 1, 3], '???.###', up_to_pi=2, strict_length_check=False))
 
+    """
+    fix a bug where p[i=-1] was not being checked correctly: only the 4th entry below should be true
+     
+    A solution to .??..??...?##. with 1,1,3 is [2 2 1 4] and [1 1 3], which is ..#..#.###....
+    A solution to .??..??...?##. with 1,1,3 is [2 2 2 3] and [1 1 3], which is ..#..#..###...
+    A solution to .??..??...?##. with 1,1,3 is [2 2 3 2] and [1 1 3], which is ..#..#...###..
+    A solution to .??..??...?##. with 1,1,3 is [2 2 4 1] and [1 1 3], which is ..#..#....###.
+    A solution to .??..??...?##. with 1,1,3 is [2 2 5 0] and [1 1 3], which is ..#..#.....###
+    """
+    '.??..??...?  ##.'
+    # should be false, these are not a valid, complete solutions
+    print(consistency_check([2, 2, 1, 4], [1, 1, 3], '.??..??...?##.', up_to_pi=-1, strict_length_check=True))
+    print(consistency_check([2, 2, 2, 3], [1, 1, 3], '.??..??...?##.', up_to_pi=-1, strict_length_check=True))
+    print(consistency_check([2, 2, 3, 2], [1, 1, 3], '.??..??...?##.', up_to_pi=-1, strict_length_check=True))
+    print(consistency_check([2, 2, 5, 0], [1, 1, 3], '.??..??...?##.', up_to_pi=-1, strict_length_check=True))
+
+    # should be true
+    print(consistency_check([2, 2, 4, 1], [1, 1, 3], '.??..??...?##.', up_to_pi=-1, strict_length_check=True))
+
     1
 
 
@@ -100,7 +120,7 @@ def solve(pattern, condition) -> int:
         # either it's a complete and valid solution, or there's nothing else we can try.
         if i == num_h:
             ps[num_h] = N - np.sum(ps[:num_h]) - sum_h
-            if consistency_check(ps, h, pattern, up_to_pi=-1, strict_length_check=True):
+            if consistency_check(ps, h, pattern, up_to_pi=-1, strict_length_check=True)[0]:
                 print(f'A solution to {pattern} with {condition} is {ps} and {h}, which is {format_answer(ps, h)}')
                 c += 1
             return
@@ -108,11 +128,11 @@ def solve(pattern, condition) -> int:
         max_pi = N - sum(ps[:i]) - sum_h
         min_pi = 1 if i not in [0, N - 1] else 0
 
-        print(f'In {pattern} with {condition} , {ps} and {h}, which is {format_answer(ps, h)}')
+        # print(f'In {pattern} with {condition} , {ps} and {h}, which is {format_answer(ps, h)}')
 
         for pi in range(min_pi, max_pi + 1):
             ps[i] = pi
-            if not consistency_check(ps, h, pattern, up_to_pi=i)[0]:
+            if not consistency_check(ps, h, pattern, up_to_pi=i, strict_length_check=False)[0]:
                 continue
             rec(i + 1, ps.copy())
 
@@ -131,7 +151,9 @@ def main():
 
     answer = 0
     for k in range(len(patterns)):
-        answer += solve(patterns[k], conditions[k])
+        n_solutions = solve(patterns[k], conditions[k])
+        print(f'********* {n_solutions} solution(s) to {patterns[k]} with {conditions[k]}')
+        answer += n_solutions
     print(answer)
 
     # general approach: the conditions string '1,1,3'
