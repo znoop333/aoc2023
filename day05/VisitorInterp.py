@@ -13,6 +13,10 @@ from math import prod
 from collections import defaultdict
 import functools
 
+import d5p2_portion
+
+PART2 = True
+
 
 @dataclasses.dataclass
 class iRange:
@@ -144,21 +148,22 @@ class VisitorInterp(day05Visitor):
   def visitSeed_list(self, ctx: day05Parser.Seed_listContext):
     self.seeds = []
     if len(ctx.seeds):
-      # part 1
-      for i in range(len(ctx.seeds)):
-        self.seeds.append(iRange(int(ctx.seeds[i].text), int(ctx.seeds[i].text)))
+      if not PART2:
+        # part 1
+        for i in range(len(ctx.seeds)):
+          self.seeds.append(iRange(int(ctx.seeds[i].text), int(ctx.seeds[i].text)))
 
-      # part 2
-      # for i in range(0, len(ctx.seeds), 2):
-      #     self.seeds.append(
-      #         iRange(int(ctx.seeds[i].text), int(ctx.seeds[i].text) + int(ctx.seeds[i + 1].text-1)))
+      else:
+        # part 2
+        for i in range(0, len(ctx.seeds), 2):
+          self.seeds.append(d5p2_portion.make_interval(int(ctx.seeds[i].text), int(ctx.seeds[i + 1].text)))
     return self.visitChildren(ctx)
 
   def visitMap(self, ctx: day05Parser.MapContext):
     self.visitChildren(ctx)
     return {
-      'destination': iRange(int(ctx.destination.text), int(ctx.destination.text) + int(ctx.length.text) - 1),
-      'source': iRange(int(ctx.source.text), int(ctx.source.text) + int(ctx.length.text) - 1),
+      'destination': int(ctx.destination.text),
+      'source': d5p2_portion.make_interval(int(ctx.source.text), int(ctx.length.text)),
       'shift': int(ctx.destination.text) - int(ctx.source.text),
     }
 
@@ -167,23 +172,22 @@ class VisitorInterp(day05Visitor):
     self.maps[self.map2ind[ctx.source.text]] = entries
     return self.visitChildren(ctx)
 
-  def search_ranges(self, a: iRange) -> int:
-    active_ranges = [a]
+  def search_ranges(self, a) -> int:
+    active_interval = a
     for map_no in range(self.maxmaps):
-      if not len(active_ranges) > 0:
-        return []
+      if active_interval.empty:
+        return -1
 
-      for rng in active_ranges:
-        new_ranges = []
-        for entry in self.maps[map_no]:
-          R = [r for r in IntersectionWithTransformation(rng, entry['source'], entry['shift']) if r]
-          if a.start == 14:
-            1
-          if len(R):
-            new_ranges.extend(R)
-            active_ranges = new_ranges
-            print(f'Map {map_no}, {self.ind2map[map_no + 1]}: {rng.start} went to {active_ranges[0].start}')
-            break
+
+      for entry in self.maps[map_no]:
+        R = [r for r in IntersectionWithTransformation(rng, entry['source'], entry['shift']) if r]
+        if a.start == 14:
+          1
+        if len(R):
+          new_ranges.extend(R)
+          active_ranges = new_ranges
+          print(f'Map {map_no}, {self.ind2map[map_no + 1]}: {rng.start} went to {active_ranges[0].start}')
+          break
 
     min_el = None
     for r in active_ranges:

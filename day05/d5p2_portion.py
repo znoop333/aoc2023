@@ -19,15 +19,16 @@ def shift_interval(interval, offset):
 
 def intersect_and_transform(input_interval, domain, offset):
   intersection = input_interval & domain
-  return shift_interval(intersection, offset)
+  return shift_interval(intersection, offset) | (input_interval - domain)
 
 
 def try_portion():
   aa = make_interval(79, 14)
   s2s = make_interval(50, 48)
 
-  soils = intersect_and_transform(aa, s2s, 52-50)
+  soils = intersect_and_transform(aa, s2s, 52 - 50)
   1
 
 
-try_portion()
+if __name__ == '__main__':
+  try_portion()
