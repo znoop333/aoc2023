@@ -13,22 +13,20 @@ import numpy as np
 
 
 def main(argv):
-    if len(argv) > 1:
-        inname = pathlib.Path(argv[1])
-        input_stream = FileStream(inname, encoding='utf-8')
-    else:
-        input_stream = FileStream('input.txt', encoding='utf-8')
-    lexer = day05Lexer(input_stream)
-    stream = CommonTokenStream(lexer)
-    parser = day05Parser(stream)
-    tree = parser.start()
-    if parser.getNumberOfSyntaxErrors() > 0:
-        print("syntax errors")
-    else:
-        vinterp = VisitorInterp()
-        vinterp.visit(tree)
-        print(vinterp.answer)
+  input_stream = FileStream('test_input.txt', 'utf-8')
+  # input_stream = FileStream('input.txt', encoding='utf-8')
+
+  lexer = day05Lexer(input_stream)
+  stream = CommonTokenStream(lexer)
+  parser = day05Parser(stream)
+  tree = parser.start()
+  if parser.getNumberOfSyntaxErrors() > 0:
+    print("syntax errors")
+  else:
+    vinterp = VisitorInterp()
+    vinterp.visit(tree)
+    print(vinterp.answer)
 
 
 if __name__ == '__main__':
-    main(sys.argv)
+  main(sys.argv)
