@@ -15,7 +15,8 @@ import functools
 
 import d5p2_portion
 
-PART2 = True
+# PART2 = True
+PART2 = False
 
 
 class VisitorInterp(day05Visitor):
@@ -42,7 +43,7 @@ class VisitorInterp(day05Visitor):
       if not PART2:
         # part 1
         for i in range(len(ctx.seeds)):
-          self.seeds.append((int(ctx.seeds[i].text), int(ctx.seeds[i].text)))
+          self.seeds.append(d5p2_portion.make_single(int(ctx.seeds[i].text)))
 
       else:
         # part 2

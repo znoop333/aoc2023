@@ -13,6 +13,10 @@ def make_interval(lb, size_):
   return D.closed(lb, lb + size_)
 
 
+def make_single(val):
+  return D.singleton(val)
+
+
 def shift_interval(interval, offset):
   return interval.replace(lower=lambda x: x + offset, upper=lambda x: x + offset)
 
