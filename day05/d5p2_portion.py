@@ -1,10 +1,11 @@
 import portion as P
 import unittest
 
-# from antlr4 import *
-# from gen.day05Lexer import day05Lexer
-# from gen.day05Parser import day05Parser
-# from VisitorInterp import VisitorInterp
+
+from antlr4 import *
+from gen.day05Lexer import day05Lexer
+from gen.day05Parser import day05Parser
+from VisitorInterp import VisitorInterp
 
 
 class IntInterval(P.AbstractDiscreteInterval):
@@ -16,7 +17,7 @@ D = P.create_api(IntInterval)
 
 
 def make_interval(lb, size_):
-  return D.closed(lb, lb + size_)
+  return D.closed(lb, lb + size_ - 1)
 
 
 def make_single(val):
@@ -85,6 +86,21 @@ class TestCalculations(unittest.TestCase):
 
       self.assertEqual(expected_vals[map_no], active_interval.lower,
                        'Seed 14, soil 14, fertilizer 53, water 49, light 42, temperature 42, humidity 43, location 43')
+
+    ii = 79
+    upto = 14
+    for map_no in range(vinterp.maxmaps):
+      for entry in vinterp.maps[map_no]:
+        interval = entry['source']
+        if ii in interval:
+          upto = min(upto, interval.upper - ii)
+          ii = ii - interval.lower + entry['shift']
+          break
+
+    print(f'79+14 was transformed to {ii} with {upto} values')
+    1
+
+
 
 
 if __name__ == '__main__':
