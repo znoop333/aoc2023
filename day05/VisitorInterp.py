@@ -16,6 +16,8 @@ import functools
 import d5p2_portion
 
 PART2 = True
+
+
 # PART2 = False
 
 
@@ -67,14 +69,17 @@ class VisitorInterp(day05Visitor):
   def search_ranges(self, a) -> int:
     active_interval = a
     for map_no in range(self.maxmaps):
-
+      matched = d5p2_portion.make_empty()
+      unmatched = active_interval
       for entry in self.maps[map_no]:
-        active_interval, matched = d5p2_portion.intersect_and_transform(active_interval, entry['source'],
-                                                                        entry['shift'])
-        if active_interval.empty:
-          return -1
-        if matched:
+        transformed, unmatched = d5p2_portion.intersect_and_transform(active_interval, entry['source'], entry['shift'])
+        matched = matched | transformed
+        active_interval = unmatched
+        if unmatched.empty:
+          active_interval = matched
           break
+      else:
+        active_interval = unmatched
       print(f'Map {map_no}, {self.ind2map[map_no + 1]}: {active_interval}')
 
     min_el = active_interval.lower
