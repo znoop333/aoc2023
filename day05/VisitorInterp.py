@@ -105,7 +105,7 @@ class VisitorInterp(day05Visitor):
             overlapping = source_range.upper - lb + 1
             new_active_size = min(active_size, overlapping)
 
-            new_lb = lb - source_range.lower + entry['shift'] + source_range.lower
+            new_lb = lb + entry['shift']
             print(
               f'lb {lb}, {active_size} is going to {new_lb}, {new_active_size} in {map_no} {self.ind2map[map_no + 1]}')
             lb = new_lb
@@ -122,11 +122,26 @@ class VisitorInterp(day05Visitor):
 
     return min_el
 
+  def search_ranges_single_val(self, a: d5p2_portion.D) -> int:
+    val = a.lower
+    for map_no in range(self.maxmaps):
+      for entry in self.maps[map_no]:
+        if val in entry['source']:
+          val += entry['shift']
+          break
+
+    return val
+
   def visitStart(self, ctx: day05Parser.StartContext):
     self.visitChildren(ctx)
     for rng in self.seeds:
-      # soln = self.search_ranges(rng)
-      soln = self.search_boundary(rng)
+
+      if not PART2:
+        soln = self.search_ranges_single_val(rng)
+      else:
+        # soln = self.search_ranges(rng)
+        soln = self.search_boundary(rng)
+
       if self.answer is None or self.answer > soln:
         self.answer = soln
 

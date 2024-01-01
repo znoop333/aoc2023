@@ -11,6 +11,9 @@ import unittest
 class IntInterval(P.AbstractDiscreteInterval):
   _step = 1
 
+  def __len__(self):
+    return self.upper - self.lower + 1
+
 
 # https://pypi.org/project/portion/
 D = P.create_api(IntInterval)
@@ -99,8 +102,6 @@ class TestCalculations(unittest.TestCase):
 
     print(f'79+14 was transformed to {ii} with {upto} values')
     1
-
-
 
 
 if __name__ == '__main__':
