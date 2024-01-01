@@ -90,12 +90,12 @@ class VisitorInterp(day05Visitor):
 
   def search_boundary(self, a) -> int:
     min_el = 10 ** 20
-    lb = a.lower
     n = a.upper - a.lower + 1
     active_size = n
     solved = 0
 
     while solved < n:
+      lb = a.lower + solved
       active_size = n - solved
 
       for map_no in range(self.maxmaps):
@@ -106,14 +106,14 @@ class VisitorInterp(day05Visitor):
             new_active_size = min(active_size, overlapping)
 
             new_lb = lb + entry['shift']
-            print(
-              f'lb {lb}, {active_size} is going to {new_lb}, {new_active_size} in {map_no} {self.ind2map[map_no + 1]}')
+            # print(
+            #   f'lb {lb}, {active_size} is going to {new_lb}, {new_active_size} in {map_no} {self.ind2map[map_no + 1]}')
             lb = new_lb
             active_size = new_active_size
             break
-        else:
-          print(
-            f'lb {lb}, {active_size} is unchanged in {map_no} {self.ind2map[map_no + 1]}')
+        # else:
+        #   print(
+        #     f'lb {lb}, {active_size} is unchanged in {map_no} {self.ind2map[map_no + 1]}')
 
       print(
         f'Min_el updated from {min_el} to {lb} with {active_size} additionally solved for {solved + active_size} total.')
@@ -140,6 +140,11 @@ class VisitorInterp(day05Visitor):
         soln = self.search_ranges_single_val(rng)
       else:
         # soln = self.search_ranges(rng)
+        # soln1 = self.search_ranges_single_val(rng)
+        # soln2 = self.search_boundary(d5p2_portion.make_single(rng.lower))
+        # if soln1 != soln2:
+        #   print(f'ERROR! {soln2} should be {soln1}!')
+
         soln = self.search_boundary(rng)
 
       if self.answer is None or self.answer > soln:
