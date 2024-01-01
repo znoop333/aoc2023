@@ -2,10 +2,10 @@ import portion as P
 import unittest
 
 
-from antlr4 import *
-from gen.day05Lexer import day05Lexer
-from gen.day05Parser import day05Parser
-from VisitorInterp import VisitorInterp
+# from antlr4 import *
+# from gen.day05Lexer import day05Lexer
+# from gen.day05Parser import day05Parser
+# from VisitorInterp import VisitorInterp
 
 
 class IntInterval(P.AbstractDiscreteInterval):

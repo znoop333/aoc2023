@@ -88,10 +88,45 @@ class VisitorInterp(day05Visitor):
 
     return min_el
 
+  def search_boundary(self, a) -> int:
+    min_el = 10 ** 20
+    lb = a.lower
+    n = a.upper - a.lower + 1
+    active_size = n
+    solved = 0
+
+    while solved < n:
+      active_size = n - solved
+
+      for map_no in range(self.maxmaps):
+        for entry in self.maps[map_no]:
+          source_range = entry['source']
+          if source_range.lower <= lb <= source_range.upper:
+            overlapping = source_range.upper - lb + 1
+            new_active_size = min(active_size, overlapping)
+
+            new_lb = lb - source_range.lower + entry['shift'] + source_range.lower
+            print(
+              f'lb {lb}, {active_size} is going to {new_lb}, {new_active_size} in {map_no} {self.ind2map[map_no + 1]}')
+            lb = new_lb
+            active_size = new_active_size
+            break
+        else:
+          print(
+            f'lb {lb}, {active_size} is unchanged in {map_no} {self.ind2map[map_no + 1]}')
+
+      print(
+        f'Min_el updated from {min_el} to {lb} with {active_size} additionally solved for {solved + active_size} total.')
+      solved += active_size
+      min_el = min(min_el, lb)
+
+    return min_el
+
   def visitStart(self, ctx: day05Parser.StartContext):
     self.visitChildren(ctx)
     for rng in self.seeds:
-      soln = self.search_ranges(rng)
+      # soln = self.search_ranges(rng)
+      soln = self.search_boundary(rng)
       if self.answer is None or self.answer > soln:
         self.answer = soln
 

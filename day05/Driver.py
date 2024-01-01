@@ -13,8 +13,8 @@ import numpy as np
 
 
 def main(argv):
-  # input_stream = FileStream('test_input.txt', 'utf-8')
-  input_stream = FileStream('input.txt', encoding='utf-8')
+  input_stream = FileStream('test_input.txt', 'utf-8')
+  # input_stream = FileStream('input.txt', encoding='utf-8')
 
   lexer = day05Lexer(input_stream)
   stream = CommonTokenStream(lexer)
