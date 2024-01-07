@@ -101,22 +101,25 @@ class VisitorInterp(day05Visitor):
       for map_no in range(self.maxmaps):
         for entry in self.maps[map_no]:
           source_range = entry['source']
-          if source_range.lower <= lb <= source_range.upper:
-            overlapping = source_range.upper - lb + 1
-            new_active_size = min(active_size, overlapping)
+          if lb > source_range.upper:
+            continue
+          if lb < source_range.lower:
+            active_size = min(active_size, source_range.lower - lb)
+            continue
+          new_active_size = min(active_size, source_range.upper - lb + 1)
+          new_lb = lb + entry['shift']
 
-            new_lb = lb + entry['shift']
-            # print(
-            #   f'lb {lb}, {active_size} is going to {new_lb}, {new_active_size} in {map_no} {self.ind2map[map_no + 1]}')
-            lb = new_lb
-            active_size = new_active_size
-            break
-        # else:
-        #   print(
-        #     f'lb {lb}, {active_size} is unchanged in {map_no} {self.ind2map[map_no + 1]}')
+          print(
+            f'lb {lb}, {active_size} is going to {new_lb}, {new_active_size} in {map_no} {self.ind2map[map_no + 1]}')
+          lb = new_lb
+          active_size = new_active_size
+          break
+        else:
+          print(
+            f'lb {lb}, {active_size} is unchanged in {map_no} {self.ind2map[map_no + 1]}')
 
       print(
-        f'Min_el updated from {min_el} to {lb} with {active_size} additionally solved for {solved + active_size} total.')
+        f'Min_el updated from {min_el} to {min(min_el, lb)} with {active_size} additionally solved for {solved + active_size} total.')
       solved += active_size
       min_el = min(min_el, lb)
 
